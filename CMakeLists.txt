@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(rmexif VERSION 0.0)
+project(rmexif VERSION 0.1)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 
