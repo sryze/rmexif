@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(rmexif
-  VERSION 0.0
-  LANGUAGES C)
+project(rmexif VERSION 0.0)
+
+add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 
 if(WIN32)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)

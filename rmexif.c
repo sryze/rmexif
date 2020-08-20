@@ -39,6 +39,12 @@
 #define MARKER_COM  0xFFFE
 #define MARKER_EOI  0xFFD9
 
+#ifdef DEBUG
+    #define DEBUG_PRINT(...) printf(__VA_ARGS__);
+#else
+    #define DEBUG_PRINT(...)
+#endif
+
 static const char EXIF_HEADER[] = {'E', 'x', 'i', 'f', '\0', '\0'};
 
 static inline uint16_t align16(uint16_t x)
@@ -129,6 +135,8 @@ int main(int argc, char **argv)
             marker = align16(*(uint16_t *)ptr);
             ptr += 2;
 
+            DEBUG_PRINT("Marker: %x\n", marker);
+
             switch (marker) {
                 case MARKER_SOI:
                 case MARKER_RSTN:
@@ -142,13 +150,11 @@ int main(int argc, char **argv)
                 case MARKER_EOI:
                     /* no payload */
                     break;
-                case MARKER_DRI:
-                    ptr += 4;
-                    break;
                 case MARKER_SOF0:
                 case MARKER_SOF2:
                 case MARKER_DHT:
                 case MARKER_DQT:
+                case MARKER_DRI:
                 case MARKER_APPN:
                 case MARKER_APPN + 2:
                 case MARKER_APPN + 3:
@@ -170,11 +176,13 @@ int main(int argc, char **argv)
                     break;
                 case MARKER_SOS:
                     length = 0;
-                    while (ptr <= end - 2) {
-                        marker = align16(*(uint16_t *)ptr);
-                        if (marker > 0xFF00 && marker < 0xFFFF) {
-                            /* found a marker! */
-                            break;
+                    while (ptr < end) {
+                        if (end - ptr >= 2) {
+                            marker = align16(*(uint16_t *)ptr);
+                            if (marker > 0xFF00 && marker < 0xFFFF) {
+                                /* found a marker! */
+                                break;
+                            }
                         }
                         ptr++;
                         length++;
