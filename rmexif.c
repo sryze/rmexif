@@ -39,12 +39,19 @@
 #define MARKER_COM  0xFFFE
 #define MARKER_EOI  0xFFD9
 
-#define ALIGN16(x) \
-    (((char *)&x)[1] != (x & 0xFF) \
-        ? (((x & 0xFF) << 8) | ((x & 0xFF00) >> 8)) \
-        : x)
-
 static const char EXIF_HEADER[] = {'E', 'x', 'i', 'f', '\0', '\0'};
+
+static inline uint16_t align16(uint16_t x)
+{
+    const uint8_t *xb = (uint8_t *)&x;
+    return (xb[1] != (x & 0xFF)) ? (((x & 0xFF) << 8) | ((x & 0xFF00) >> 8)): x;
+}
+
+static inline void fclose_safe(FILE *file) {
+    if (file != NULL) {
+        fclose(file);
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -119,7 +126,7 @@ int main(int argc, char **argv)
             uint16_t length;
             char *old_ptr = ptr;
 
-            marker = ALIGN16(*(uint16_t *)ptr);
+            marker = align16(*(uint16_t *)ptr);
             ptr += 2;
 
             switch (marker) {
@@ -158,13 +165,13 @@ int main(int argc, char **argv)
                 case MARKER_APPN + 14:
                 case MARKER_APPN + 15:
                 case MARKER_COM:
-                    length = ALIGN16(*(uint16_t *)ptr);
+                    length = align16(*(uint16_t *)ptr);
                     ptr += length;
                     break;
                 case MARKER_SOS:
                     length = 0;
                     while (ptr <= end - 2) {
-                        marker = ALIGN16(*(uint16_t *)ptr);
+                        marker = align16(*(uint16_t *)ptr);
                         if (marker > 0xFF00 && marker < 0xFFFF) {
                             /* found a marker! */
                             break;
@@ -180,7 +187,7 @@ int main(int argc, char **argv)
                      *
                      * https://www.media.mit.edu/pia/Research/deepview/exif.html
                      */
-                    length = ALIGN16(*(uint16_t *)ptr);
+                    length = align16(*(uint16_t *)ptr);
                     if (length < sizeof(EXIF_HEADER)) {
                         /* not EXIF */
                         ptr += length;
@@ -228,11 +235,8 @@ int main(int argc, char **argv)
 error:
     free(data);
     free(data_out);
-    if (file != NULL) {
-        fclose(file);
-    }
-    if (file_out != NULL) {
-        fclose(file_out);
-    }
+    fclose_safe(file);
+    fclose_safe(file_out);
+
     return 1;
 }
