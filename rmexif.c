@@ -179,7 +179,8 @@ int main(int argc, char **argv)
                     while (ptr < end) {
                         if (end - ptr >= 2) {
                             marker = align16(*(uint16_t *)ptr);
-                            if (marker > 0xFF00 && marker < 0xFFFF) {
+                            if (marker > 0xFF00
+                                && (marker & 0xFFF8) != MARKER_RSTN) {
                                 /* found a marker! */
                                 break;
                             }
