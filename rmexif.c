@@ -178,9 +178,9 @@ int main(int argc, char **argv)
                     length = 0;
                     while (ptr < end) {
                         if (end - ptr >= 2) {
-                            marker = align16(*(uint16_t *)ptr);
-                            if (marker > 0xFF00
-                                && (marker & 0xFFF8) != MARKER_RSTN) {
+                            uint16_t maybe_marker = align16(*(uint16_t *)ptr);
+                            if (maybe_marker > 0xFF00
+                                && (maybe_marker & 0xFFF8) != MARKER_RSTN) {
                                 /* found a marker! */
                                 break;
                             }
@@ -219,6 +219,10 @@ int main(int argc, char **argv)
             if (ptr > old_ptr) {
                 memcpy(ptr_out, old_ptr, (size_t)(ptr - old_ptr));
                 ptr_out += ptr - old_ptr;
+            }
+
+            if (marker == MARKER_EOI) {
+                break;
             }
         }
 
