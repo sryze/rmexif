@@ -5,10 +5,21 @@ matrix:
     - os: linux
       dist: xenial
       sudo: required
-      compiler: gcc
+      addons:
+        snaps:
+          - ffsend
+    - os: freebsd
+      before_install:
+        - sudo pkg install -y ffsend
     - os: osx
-      compiler: clang
+      addons:
+        homebrew:
+          packages:
+            - ffsend
     - os: windows
+      before_install:
+        - curl -L https://github.com/timvisee/ffsend/releases/download/v0.2.65/ffsend-v0.2.65-windows-x64-static.exe -o ffsend.exe
+        - export PATH=$PATH:$PWD
 
 before_script:
   - mkdir build && cd build
@@ -16,3 +27,6 @@ before_script:
 
 script:
   - cmake --build .
+
+after_script:
+  - ffsend upload rmexif-*.*
