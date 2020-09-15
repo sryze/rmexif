@@ -26,7 +26,8 @@ before_script:
   - cmake .. -DCMAKE_BUILD_TYPE=Release
 
 script:
-  - cmake --build .
+  - cmake --build . --config Release
+  - cpack -C Release
 
 after_script:
   - ffsend upload rmexif-*.*
