@@ -10,7 +10,7 @@ endif()
 
 add_executable(rmexif rmexif.c)
 
-install(TARGETS rmexif)
+install(TARGETS rmexif RUNTIME DESTINATION .)
 
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 if(WIN32)
