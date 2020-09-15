@@ -31,4 +31,4 @@ script:
   - cmake --build . --config Release --target package
 
 after_script:
-  - ffsend upload --verbose rmexif-*.*
+  - ffsend upload rmexif-*.*
