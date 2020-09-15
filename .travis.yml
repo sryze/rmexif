@@ -16,6 +16,7 @@ matrix:
         homebrew:
           packages:
             - ffsend
+          update: true
     - os: windows
       before_install:
         - curl -L https://github.com/timvisee/ffsend/releases/download/v0.2.65/ffsend-v0.2.65-windows-x64-static.exe -o ffsend.exe
@@ -30,4 +31,4 @@ script:
   - cpack -C Release
 
 after_script:
-  - ffsend upload rmexif-*.*
+  - find . -name "rmexif-*.*" | xargs ffsend upload
