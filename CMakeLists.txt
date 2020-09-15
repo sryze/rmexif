@@ -13,8 +13,10 @@ add_executable(rmexif rmexif.c)
 install(TARGETS rmexif RUNTIME DESTINATION .)
 
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-if(WIN32)
+if(WIN32 OR APPLE)
   set(CPACK_GENERATOR ZIP)
+elseif(UNIX)
+  set(CPACK_GENERATOR TGZ)
 endif()
 
 include(CPack)
