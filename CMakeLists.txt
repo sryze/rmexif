@@ -8,7 +8,7 @@ if(WIN32)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-add_executable(rmexif rmexif.c)
+add_executable(rmexif src/rmexif.c)
 
 install(TARGETS rmexif RUNTIME DESTINATION .)
 
